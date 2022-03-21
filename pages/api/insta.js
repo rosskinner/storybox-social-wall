@@ -18,7 +18,7 @@ export default async function handler(req, res) {
     // Execute all requests prior to authorization in the real Android application
 // Not required but recommended
     await ig.simulate.preLoginFlow();
-    const loggedInUser = await ig.account.login("ros_skinner", "M00nfac3");
+    const loggedInUser = await ig.account.login(req.body.user, process.env[`NEXT_PUBLIC_${req.body.user}_PASSWORD`]);
     // The same as preLoginFlow()
     // Optionally wrap it to process.nextTick so we dont need to wait ending of this bunch of requests
     process.nextTick(async () => await ig.simulate.postLoginFlow());

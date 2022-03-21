@@ -15,7 +15,10 @@ export default function Home() {
       headers: {
         'Content-Type': 'application/json;charset=utf-8'
       },
-      body: JSON.stringify({secret: process.env.NEXT_PUBLIC_API_SECRET}),
+      body: JSON.stringify({
+        secret: process.env.NEXT_PUBLIC_API_SECRET,
+        user: 'ros_skinner'
+      }),
     })
     const json = await response.json()
     console.log("json", json)
