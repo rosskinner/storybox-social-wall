@@ -2,9 +2,10 @@ import Head from 'next/head'
 import Image from 'next/image'
 import { useEffect } from 'react'
 import styles from '../styles/Home.module.css'
+import {setUser} from '../lib/instagram'
 
 
-export default function Home() {
+export default function Home({home, user}) {
   const fetchData = async () => {
     console.log("GET")
     let response
@@ -16,24 +17,29 @@ export default function Home() {
         'Content-Type': 'application/json;charset=utf-8'
       },
       body: JSON.stringify({
-        secret: process.env.NEXT_PUBLIC_API_SECRET,
-        user: 'ros_skinner'
+        user: user
       }),
     })
     const json = await response.json()
     console.log("json", json)
   }
   useEffect(() => {
-    fetchData()
+    // if (user) {
+    //   console.log(user)
+    //   fetchData()
     
-      // .then((res) => console.log(res.json()))
-      // .then((data) => {
-      //   console.log("data", data)
-      //   // setData(data)
-      //   // setLoading(false)
-      // })
+    //   .then((res) => console.log(res.json()))
+    //   .then((data) => {
+    //     console.log("data", data)
+    //     // setData(data)
+    //     // setLoading(false)
+    //   })
+    // }
+    
   
-  }, [])
+  }, [user])
+
+  console.log("HOME EE", home, user)
   return (
     <div className={styles.container}>
       <Head>
@@ -52,3 +58,25 @@ export default function Home() {
     </div>
   )
 }
+
+export async function getStaticProps () {
+  const data = {home: "HOME "}
+  // const ig = new Instagram()
+  // const user = await setUser()
+  // const userFeed = insta.ig.feed.user(insta.user);
+  // const myPostsFirstPage = await userFeed.items();
+
+  return {
+    props: { home: data.home }
+  }
+}
+
+// export async function getServerSideProps (context) {
+//   console.log(context)
+
+//   // console.log(userFeed)
+//   // return {
+//   //   props: { data:}
+//   // }
+//   return {}
+// }

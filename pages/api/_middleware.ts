@@ -1,11 +1,12 @@
-import { NextResponse } from 'next/server'
-import type { NextRequest } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 
-const SECRET = process.env.NEXT_PUBLIC_API_SECRET
-export function middleware(req: NextResponse, ev) {
+
+export function middleware(req: NextRequest, ev ) {
   let response = NextResponse.next()
+  console.log(response)
+  // console.log(req.page)
   // console.log(req)
-  response.cookie('secret', SECRET)
+  // response.cookie('secret')
   return response
   
 }
