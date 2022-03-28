@@ -2,7 +2,7 @@ const { createServer } = require('http')
 const { parse } = require('url')
 const next = require('next')
 const Cookies = require('cookies')
-const {fetchUser, fetchAccessToken} = require('./lib/instaapi')
+const {fetchUser, fetchNewToken, fetchAccessToken} = require('./lib/instaapi')
 
 
 const dev = process.env.NODE_ENV !== 'production'
@@ -21,14 +21,22 @@ app.prepare().then(() => {
       const { pathname, query, search } = parsedUrl
       const cookies = new Cookies(req, res)
       
-      // cookies.set('accessTokenAPI')
-      console.log(cookies.get('accessTokenAPI'))
-      
-      // res.json(cookies.get('accessTokenAPI'))
+      if (cookies.get('tokenExpire') && cookies.get('accessTokenAPI')) {
+        // if (cookies.get('tokenExpire'))
+        const expireTime = cookies.get('tokenExpire')
+        const daysLeft = (expireTime - Date.now()) / 1000 / 60 / 60 / 24
+        if (daysLeft < 20) {
+          const oldAccessToken = JSON.parse(cookies.get('accessTokenAPI'))
+          const accessToken = await fetchNewToken(oldAccessToken.access_token)
+          console.log('NEW ACCESS TOKEN', daysLeft)
+          cookies.set('accessTokenAPI', JSON.stringify(accessToken))
+          cookies.set('tokenExpire', Date.now() + accessToken.expires_in*1000)
+        }
+      }
+
       if (pathname === '/auth') {
         console.log('PATH', pathname, query, search, pathname === '/auth', cookies.get('accessTokenAPI'))
         if (!cookies.get('accessTokenAPI') && search === null) {
-          console.log("GET USER")
           const access = await fetchUser()
           console.log(access)
           // return NextResponse.redirect(access.url)
@@ -38,12 +46,10 @@ app.prepare().then(() => {
         }
         if (parsedUrl.search) {
           const code = parsedUrl.search.split('?code=')[1]
-          console.log(code)
-          
           const accessToken = await fetchAccessToken(code)
-          console.log("ACCESS TOKEN", accessToken)
-          // resCookie.cookie('accessTokenAPI', accessToken)
+
           cookies.set('accessTokenAPI', JSON.stringify(accessToken))
+          cookies.set('tokenExpire', Date.now() + accessToken.expires_in*1000)
           await app.render(req, res, '/', query)
         } else {
           await app.render(req, res, '/auth', query)

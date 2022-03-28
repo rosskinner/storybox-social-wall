@@ -35,32 +35,12 @@ export default function Home({data}) {
   )
 }
 
-// export async function getStaticProps () {
-//   const data = {home: "HOME "}
-//   // const ig = new Instagram()
-//   // const user = await setUser()
-//   // const userFeed = insta.ig.feed.user(insta.user);
-//   // const myPostsFirstPage = await userFeed.items();
-  
-
-//   return {
-//     props: { home: data.home }
-//   }
-// }
-
-export async function getServerSideProps (context) {
-  console.log("context",)
-  const token = JSON.parse(context.req.cookies.accessTokenAPI)
-
-  const data = await getInstagramData(token)
-  console.log(data)
-
-  // console.log(userFeed)
-  // return {
-  //   redirect: {
-  //     destination: auth.url,
-  //     permanent: false,
-  //   }
+// export async function getServerSideProps (context) {
+  // console.log("context", context.req)
+  // let data = null
+  // if (context.req.cookies.accessTokenAPI) {
+  //   const token = JSON.parse(context.req.cookies.accessTokenAPI)
+  //   data = await getInstagramData(token)
   // }
-  return {props:{data: data}}
-}
+//   return {props:{}}
+// }
